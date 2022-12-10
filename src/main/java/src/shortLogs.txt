@@ -1,0 +1,5 @@
+[
+{"num_bikes_disabled":1,"legacy_id":"72","num_bikes_available":2,"last_reported":1670538063,"num_ebikes_available":1,"is_renting":1,"is_returning":1,"station_id":"72","num_docks_available":49,"eightd_has_available_keys":false,"station_status":"active","is_installed":1,"num_docks_disabled":0},
+
+{"num_bikes_disabled":3,"legacy_id":"79","num_bikes_available":27,"last_reported":1670538236,"num_ebikes_available":2,"is_renting":1,"is_returning":1,"station_id":"79","num_docks_available":3,"eightd_has_available_keys":false,"station_status":"active","is_installed":1,"num_docks_disabled":0}
+]
