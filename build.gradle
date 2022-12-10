@@ -1,0 +1,118 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'idea'
+    id 'eclipse'
+}
+
+group 'cscie88'
+version '1.0-SNAPSHOT-CONSUMER'
+sourceCompatibility = 1.8
+// targetCompatibility = 1.11
+targetCompatibility = 1.8
+mainClassName = "src.CustomKafkaConsumer"
+
+repositories {
+    mavenCentral()
+}
+ext {
+    slf4j_version = '1.7.30'
+    logback_version = '1.2.3'
+    kafka_version = '3.3.1'
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: logback_version
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    // https://mvnrepository.com/artifact/io.lettuce/lettuce-core
+    implementation group: 'io.lettuce', name: 'lettuce-core', version: '6.1.9.RELEASE'
+
+    // cassandra
+    implementation 'com.datastax.cassandra:cassandra-driver-core:3.11.2'
+    // redis
+    implementation group: 'redis.clients', name: 'jedis', version: '2.8.0'
+
+    // elasticsearch
+    implementation 'jakarta.json:jakarta.json-api:2.1.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+    implementation 'co.elastic.clients:elasticsearch-java:8.3.3'
+
+    // gson
+    implementation 'com.google.code.gson:gson:2.10'
+//    // dependencies for Hadoop MR client
+//    implementation group: 'org.apache.hadoop', name: 'hadoop-client', version: '3.3.4'
+//
+//    // dependencies for Spark and Avro
+//    // https://mvnrepository.com/artifact/org.apache.spark/spark-avro
+//    implementation group: 'org.apache.spark', name: 'spark-avro_2.12', version: '3.1.2'
+//    // https://mvnrepository.com/artifact/org.apache.spark/spark-core
+//    implementation group: 'org.apache.spark', name: 'spark-core_2.12', version: '3.1.2'
+//    // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
+//    implementation group: 'org.apache.spark', name: 'spark-sql_2.12', version: '3.1.2'
+//
+//    // dependencies for HBase
+//    // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
+//    implementation group: 'org.apache.hbase', name: 'hbase', version: '2.4.4'
+//    // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
+//    implementation group: 'org.apache.hbase', name: 'hbase-client', version: '2.4.4'
+
+    // dependencies for kafka
+    implementation group: 'org.apache.kafka', name: 'kafka-clients', version: kafka_version
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude ("config")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    zip64 true
+    exclude 'META-INF/*.DSA'
+
+    manifest {
+        attributes(
+                "Main-Class": "$mainClassName",
+                "Implementation-Title": rootProject.name,
+                "Build-Time": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+}
+
+run {
+    // support passing -Dsystem.property=value to bootRun task
+    systemProperties = System.properties
+}
+
+task("srcZip", type:Zip){
+    archiveBaseName = "sourceZip"
+    from (project.rootDir){
+        exclude ('*/*.iml')
+        exclude 'sourceZip*'
+        exclude ('*/*.zip')
+        exclude ('*/*.project')
+        exclude 'build'
+        exclude 'tools'
+        exclude '*.zip'
+        exclude '*.idea'
+        exclude 'out'
+        exclude 'META-iNF'
+        exclude 'org.slf4j'
+        exclude 'logback-classic'
+    }
+    destinationDir project.rootDir
+}
